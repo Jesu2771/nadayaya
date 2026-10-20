@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galería de Fotos Pro</title>
+  <link rel="stylesheet" href="stayls.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Encabezado / Navbar -->
+  <header class="header">
+    <div class="logo">
+      <i data-lucide="image"></i>
+      <h1>Galería<span>Pro</span></h1>
+    </div>
+    <div class="header-actions">
+      <button id="btn-open-upload" class="btn btn-primary">
+        <i data-lucide="upload"></i> Subir Foto
+      </button>
+      <button id="btn-open-album-modal" class="btn btn-secondary">
+        <i data-lucide="folder-plus"></i> Nuevo Álbum
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Pestañas de Filtro por Álbum -->
+    <section class="album-tabs-section">
+      <div class="album-tabs" id="album-tabs">
+        <!-- Generado dinámicamente -->
+      </div>
+    </section>
+
+    <!-- Barra de búsqueda y conteo -->
+    <section class="controls-bar">
+      <div class="search-box">
+        <i data-lucide="search"></i>
+        <input type="text" id="search-input" placeholder="Buscar por nombre o etiqueta...">
+      </div>
+      <div class="photo-count" id="photo-count">Cargando fotos...</div>
+    </section>
+
+    <!-- Rejilla de Imágenes -->
+    <section class="gallery-grid" id="gallery-grid">
+      <!-- Se puebla con JS -->
+    </section>
+  </main>
+
+  <!-- Modal de Edición y Visor de Foto -->
+  <div class="modal" id="editor-modal">
+    <div class="modal-content modal-large">
+      <button class="modal-close" id="close-editor">&times;</button>
+      <div class="editor-layout">
+        <div class="editor-preview-container">
+          <img id="editor-image" src="" alt="Vista Previa">
+        </div>
+        <div class="editor-controls">
+          <h2 id="editor-title">Editar Foto</h2>
+          <p id="editor-album-tag" class="badge">Álbum</p>
+
+          <!-- Presets rápidos -->
+          <div class="control-group">
+            <label>Efectos Preestablecidos</label>
+            <div class="presets-grid">
+              <button class="preset-btn" data-preset="normal">Normal</button>
+              <button class="preset-btn" data-preset="vintage">Vintage</button>
+              <button class="preset-btn" data-preset="bw">B&N Dramático</button>
+              <button class="preset-btn" data-preset="vivid">Vívido</button>
+              <button class="preset-btn" data-preset="cool">Cálido/Frío</button>
+            </div>
+          </div>
+
+          <!-- Controles de Deslizadores -->
+          <div class="sliders-list">
+            <div class="slider-group">
+              <div class="slider-label"><span>Brillo</span><span id="val-brightness">100%</span></div>
+              <input type="range" id="filter-brightness" min="0" max="200" value="100">
+            </div>
+            <div class="slider-group">
+              <div class="slider-label"><span>Contraste</span><span id="val-contrast">100%</span></div>
+              <input type="range" id="filter-contrast" min="0" max="200" value="100">
+            </div>
+            <div class="slider-group">
+              <div class="slider-label"><span>Saturación</span><span id="val-saturate">100%</span></div>
+              <input type="range" id="filter-saturate" min="0" max="200" value="100">
+            </div>
+            <div class="slider-group">
+              <div class="slider-label"><span>Escala de Grises</span><span id="val-grayscale">0%</span></div>
+              <input type="range" id="filter-grayscale" min="0" max="100" value="0">
+            </div>
+            <div class="slider-group">
+              <div class="slider-label"><span>Sepia</span><span id="val-sepia">0%</span></div>
+              <input type="range" id="filter-sepia" min="0" max="100" value="0">
+            </div>
+            <div class="slider-group">
+              <div class="slider-label"><span>Desenfoque (Blur)</span><span id="val-blur">0px</span></div>
+              <input type="range" id="filter-blur" min="0" max="10" value="0" step="0.5">
+            </div>
+            <div class="slider-group">
+              <div class="slider-label"><span>Rotación Tono (Hue)</span><span id="val-hue">0°</span></div>
+              <input type="range" id="filter-hue" min="0" max="360" value="0">
+            </div>
+          </div>
+
+          <!-- Acciones del Editor -->
+          <div class="editor-actions">
+            <button id="btn-reset-filters" class="btn btn-secondary"><i data-lucide="rotate-ccw"></i> Reiniciar</button>
+            <button id="btn-save-filters" class="btn btn-primary"><i data-lucide="save"></i> Guardar Cambios</button>
+            <button id="btn-download-photo" class="btn btn-success"><i data-lucide="download"></i> Descargar</button>
+            <button id="btn-delete-photo" class="btn btn-danger"><i data-lucide="trash-2"></i> Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Subir Nueva Imagen -->
+  <div class="modal" id="upload-modal">
+    <div class="modal-content">
+      <button class="modal-close" id="close-upload">&times;</button>
+      <h2>Subir Nueva Imagen</h2>
+      <form id="upload-form">
+        <div class="drop-zone" id="drop-zone">
+          <i data-lucide="cloud-upload" class="drop-icon"></i>
+          <p>Arrastra y suelta tu archivo aquí o <span>haz clic para explorar</span></p>
+          <input type="file" id="file-input" accept="image/*" hidden>
+        </div>
+        <div class="form-group">
+          <label for="img-title">Título de la imagen</label>
+          <input type="text" id="img-title" placeholder="Ej. Atardecer en la playa" required>
+        </div>
+        <div class="form-group">
+          <label for="img-album">Asignar a Álbum</label>
+          <select id="img-album" required>
+            <!-- Llenado con JS -->
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Agregar a Galería</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para Crear Nuevo Álbum -->
+  <div class="modal" id="album-modal">
+    <div class="modal-content">
+      <button class="modal-close" id="close-album-modal">&times;</button>
+      <h2>Crear Nuevo Álbum</h2>
+      <form id="album-form">
+        <div class="form-group">
+          <label for="album-name">Nombre del Álbum</label>
+          <input type="text" id="album-name" placeholder="Ej. Mascotas, Eventos..." required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Crear Álbum</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
